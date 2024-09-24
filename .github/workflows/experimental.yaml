@@ -18,10 +18,6 @@ name: CI/CD Experimental release
 on:
   workflow_dispatch:
 
-env:
-  GIT_COMMIT_HASH_START=$(printf "${{ github.sha }}" | cut -c -8)
-  GIT_COMMIT_HASH_END=$(printf "${{ github.sha }}" | rev | cut -c -8 | rev)
-
 jobs:
   # Run tests
   test:
@@ -65,10 +61,15 @@ jobs:
       - name: "Install node modules (if present)"
         run: bash -c 'if [ -f package.json ]; then npm ci ; fi'
 
+      - name: Set env
+        run: |
+          echo "GIT_COMMIT_HASH_START=$(printf "${{ github.sha }}" | cut -c -8)" >> $GITHUB_ENV
+          echo "GIT_COMMIT_HASH_END=$(printf "${{ github.sha }}" | rev | cut -c -8 | rev)" >> $GITHUB_ENV
+
       - name: "Run .cicd/deploy.sh script"
         run: ./.cicd/deploy.sh
         env:
-          RELEASE_VERSION: "v0.0.0-experimental-${{ github.sha }}"
+          RELEASE_VERSION: "v0.0.0-experimental-${{ env.GIT_COMMIT_HASH_START }}-${{ env.GIT_COMMIT_HASH_END }}"
 
           NODE_AUTH_TOKEN: ${{ secrets.ANIO_NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.ANIO_NPM_TOKEN }}
