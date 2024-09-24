@@ -19,8 +19,8 @@ on:
   workflow_dispatch:
 
 env:
-  GIT_COMMIT_HASH_START=printf "${{ github.sha }}" | cut -c -8
-  GIT_COMMIT_HASH_END=printf "${{ github.sha }}" | rev | cut -c -8 | rev
+  GIT_COMMIT_HASH_START=$(printf "${{ github.sha }}" | cut -c -8)
+  GIT_COMMIT_HASH_END=$(printf "${{ github.sha }}" | rev | cut -c -8 | rev)
 
 jobs:
   # Run tests
